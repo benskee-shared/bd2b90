@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useContext } from "react";
+import React, { useCallback, useEffect, useState, useContext, useMemo } from "react";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
 import { Grid, CssBaseline, Button } from "@material-ui/core";
@@ -80,19 +80,20 @@ const Home = ({ user, logout }) => {
 
   const addNewConvo = useCallback(
     (recipientId, message) => {
-      const updatedConversations = [...conversations]
-
-      updatedConversations.forEach((convo) => {
-        if (convo.otherUser.id === recipientId) {
-          convo.messages.push(message);
-          convo.latestMessageText = message.text;
-          convo.id = message.conversationId;
-        }
-      });
-      setConversations(updatedConversations);
-    },
-    [setConversations, conversations],
-  );
+      setConversations((prev) =>
+        prev.map((convo) => {
+          if (convo.otherUser.id === recipientId) {
+            const convoCopy = { ...convo };
+            convoCopy.messages = [ message, ...convo.messages ];
+            convoCopy.latestMessageText = message.text;
+            convoCopy.id = message.conversationId;
+            return convoCopy;
+          } else {
+            return convo;
+          }
+        })
+      );
+    }, []);
 
   const addMessageToConversation = useCallback(
     (data) => {
@@ -108,24 +109,36 @@ const Home = ({ user, logout }) => {
         setConversations((prev) => [newConvo, ...prev]);
       }
       
-      const updatedConversations = [...conversations]
+      setConversations((prev) =>
+        prev.map((convo) => {
+          if (convo.id === message.conversationId) {
+            const convoCopy = { ...convo };
+            convoCopy.messages = [ ...convo.messages, message ];
+            convoCopy.latestMessageText = message.text;
+            return convoCopy;
+          } else {
+            return convo;
+          }
+        })
+      );
 
-      updatedConversations.forEach((convo) => {
-        if (convo.id === message.conversationId) {
-          convo.messages = [message, ...convo.messages];
-          convo.latestMessageText = message.text;
-        }
-      });
-
-      setConversations(updatedConversations);
-
-    },
-    [setConversations, conversations],
-  );
+    }, []);
 
   const setActiveChat = (username) => {
     setActiveConversation(username);
   };
+
+  useMemo(() => { setConversations((prev) =>
+        prev.map((convo) => {
+          if (convo.otherUser.username === activeConversation) {
+            const convoCopy = { ...convo };
+            convoCopy.messages.sort((a, b) => a.id - b.id);
+            return convoCopy;
+          } else {
+            return convo;
+          }
+        })
+      );}, [activeConversation])
 
   const addOnlineUser = useCallback((id) => {
     setConversations((prev) =>
