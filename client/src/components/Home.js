@@ -62,9 +62,9 @@ const Home = ({ user, logout }) => {
     });
   };
 
-  const postMessage = (body) => {
+  const postMessage = async (body) => {
     try {
-      const data = saveMessage(body);
+      const data = await saveMessage(body);
 
       if (!body.conversationId) {
         addNewConvo(body.recipientId, data.message);
@@ -80,17 +80,17 @@ const Home = ({ user, logout }) => {
 
   const addNewConvo = useCallback(
     (recipientId, message) => {
-      conversations.forEach((convo) => {
-        if (convo.otherUser.id === recipientId) {
-          convo.messages.push(message);
-          convo.latestMessageText = message.text;
-          convo.id = message.conversationId;
-        }
-      });
-      setConversations(conversations);
-    },
-    [setConversations, conversations],
-  );
+      setConversations((prev) => {
+        // add new convo and move it to start of conversations array
+        const newConvo = prev.filter((convo)=> convo.otherUser.id === recipientId)[0]
+        const newConvoCopy = { ...newConvo }
+        newConvoCopy.messages = [ ...newConvo.messages, message ];
+        newConvoCopy.latestMessageText = message.text;
+        newConvoCopy.id = message.conversationId;
+        return [newConvoCopy, ...prev.filter((convo)=> convo.otherUser.id !== recipientId)]
+        })
+    }, []);
+
   const addMessageToConversation = useCallback(
     (data) => {
       // if sender isn't null, that means the message needs to be put in a brand new convo
@@ -104,17 +104,29 @@ const Home = ({ user, logout }) => {
         newConvo.latestMessageText = message.text;
         setConversations((prev) => [newConvo, ...prev]);
       }
-
-      conversations.forEach((convo) => {
-        if (convo.id === message.conversationId) {
-          convo.messages.push(message);
-          convo.latestMessageText = message.text;
+      
+      setConversations((prev) => {
+        let newState = [ ...prev ]
+        if ( newState[0].id !== message.conversationId) {
+          // move current conversation to start of conversations array
+          const currentConvo = newState.filter((convo) => convo.id === message.conversationId)[0]
+          const otherConvos = newState.filter((convo) => convo.id !== message.conversationId)
+          newState = [currentConvo, ...otherConvos]
         }
-      });
-      setConversations(conversations);
-    },
-    [setConversations, conversations],
-  );
+        return newState.map((convo) => {
+          if (convo.id === message.conversationId) {
+            const convoCopy = { ...convo };
+            convoCopy.messages = [ ...convo.messages, message ];
+            convoCopy.latestMessageText = message.text;
+            return convoCopy;
+          } else {
+            return convo;
+          }
+        })
+      }
+      );
+
+    }, []);
 
   const setActiveChat = (username) => {
     setActiveConversation(username);
@@ -181,7 +193,11 @@ const Home = ({ user, logout }) => {
   useEffect(() => {
     const fetchConversations = async () => {
       try {
-        const { data } = await axios.get("/api/conversations");
+        let { data } = await axios.get("/api/conversations");
+        data = data.map(convo => {
+          convo.messages.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+          return convo
+        })
         setConversations(data);
       } catch (error) {
         console.error(error);
