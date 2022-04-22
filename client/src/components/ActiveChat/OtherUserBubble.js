@@ -1,10 +1,13 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Typography, Avatar } from '@material-ui/core';
+import SingleImage from './SingleImage';
+import { MultipleImages } from '.';
 
 const useStyles = makeStyles(() => ({
   root: {
     display: 'flex',
+    marginBottom: '25px',
   },
   avatar: {
     height: 30,
@@ -21,6 +24,11 @@ const useStyles = makeStyles(() => ({
   bubble: {
     backgroundImage: 'linear-gradient(225deg, #6CC1FF 0%, #3A8DFF 100%)',
     borderRadius: '0 10px 10px 10px',
+    marginTop: -5
+  },
+    singleImage: {
+    borderRadius: '0 0 10px 10px',
+    minWidth: '150px'
   },
   text: {
     fontSize: 14,
@@ -31,8 +39,10 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const OtherUserBubble = ({ text, time, otherUser }) => {
+const OtherUserBubble = ({ text, time, otherUser, images }) => {
   const classes = useStyles();
+  const hasSingleImage = images && images.length === 1
+  const hasMultipleImages = images && images.length > 1
 
   return (
     <Box className={classes.root}>
@@ -45,9 +55,11 @@ const OtherUserBubble = ({ text, time, otherUser }) => {
         <Typography className={classes.usernameDate}>
           {otherUser.username} {time}
         </Typography>
-        <Box className={classes.bubble}>
+          {hasSingleImage && <SingleImage hasText={!!text} imageUrl={images[0]} sender={false} />}
+        {text && <Box className={hasSingleImage ? `${classes.bubble} ${classes.singleImage}` : classes.bubble}>
           <Typography className={classes.text}>{text}</Typography>
-        </Box>
+        </Box>}
+          {hasMultipleImages && <MultipleImages images={images} sender={false} />}
       </Box>
     </Box>
   );
