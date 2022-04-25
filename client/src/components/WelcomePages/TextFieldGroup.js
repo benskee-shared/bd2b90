@@ -3,7 +3,10 @@ import { FormControl, TextField, makeStyles, FormHelperText } from '@material-ui
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        '.MuiInputLabel-asterisk': {
+      'MuiInput-input': {
+        textSize: "4rem"
+      },
+      '.MuiInputLabel-asterisk': {
           color: "red"
       },
       '& .MuiInput-underline': {
@@ -20,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export const WelcomeInput = ({ name, label=name, type="text", minLength=0, error=null }) => {
+export const TextFieldGroup = ({ name, label=name, type="text", minLength=0, error=null }) => {
   const classes = useStyles();
   const textLabel = `${label[0].toUpperCase()}${label.slice(1)}`
 
@@ -30,8 +33,8 @@ export const WelcomeInput = ({ name, label=name, type="text", minLength=0, error
         classes={{ root: classes.root}}
         aria-label={label}
         label={textLabel}
-        inputProps={{ minLength }}
-        InputLabelProps={{ required: false }}
+        inputProps={{ minLength, style: {fontSize: '1.25rem', fontWeight: '900', textShadow: "1px 0"} }}
+        InputLabelProps={{ required: false, style: {fontSize: '1.5rem'} }}
         name={name}
         type={type}
         color="secondary"

@@ -7,8 +7,13 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
   },
   submitButton: {
-    padding: "12px 50px",
+    width: '14rem',
+    height: '5rem',
     marginTop: "3rem",
+    '& .MuiButton-label': {
+      fontWeight: "900",
+      fontSize: "1.3rem",
+    }
   },
 }));
 

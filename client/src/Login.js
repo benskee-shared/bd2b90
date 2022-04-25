@@ -2,25 +2,28 @@ import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import WelcomeImage from './components/WelcomePages/WelcomeImage';
 import { Grid, Typography, makeStyles } from '@material-ui/core';
-import { OtherPageBanner } from './components/WelcomePages/OtherPageBanner';
-import { WelcomeInput } from './components/WelcomePages/WelcomeInput';
+import { WelcomeBanner } from './components/WelcomePages/WelcomeBanner';
+import { TextFieldGroup } from './components/WelcomePages/TextFieldGroup';
 import { SubmitButton } from './components/WelcomePages/SubmitButton';
 
 const useStyles = makeStyles((theme) => ({
   main: {
-    height: '100vh'
+    height: '100%',
+    maxHeight: '100vh',
   },
   loginContainer: {
     display: 'block',
   },
   welcomeText: {
     fontWeight: "900",
+    textShadow: "1px 0",
+    fontSize: "2rem"
   },
   loginForm: {
-    padding: "6rem",
+    width: "90%",
+    padding: "5rem",
     display: "flex",
     flexDirection: "column",
-    width: "100%"
   },
 }));
 
@@ -45,14 +48,14 @@ const Login = ({ user, login }) => {
   return (
     <Grid container className={classes.main}>
       <WelcomeImage />
-      <Grid container item sm={7} lg={8} className={classes.loginContainer}>
-        <OtherPageBanner text="Don't have an account?" link="/register" buttonLabel="Create account" />
+      <Grid container item sm={7} className={classes.loginContainer}>
+        <WelcomeBanner text="Don't have an account?" link="/register" buttonLabel="Create account" />
         <Grid container item className={classes.loginForm}>
           <Typography variant="h5" className={classes.welcomeText}>Welcome back!</Typography>
           <form onSubmit={handleLogin} autoComplete="off">
             <Grid>
-              <WelcomeInput name="username"/>
-              <WelcomeInput name="password" type="password" />
+              <TextFieldGroup name="username"/>
+              <TextFieldGroup name="password" type="password" />
               <SubmitButton label="Login"/>
             </Grid>
           </form>
