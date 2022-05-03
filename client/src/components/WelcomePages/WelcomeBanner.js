@@ -12,32 +12,39 @@ const useStyles = makeStyles((theme) => ({
   bannerContainer: {
     margin: "1rem",
     width: "auto",
-    marginRight: "5rem",
-    "@media only screen and (max-width: 600px)": {
+    marginRight: "4vw",
+    [theme.breakpoints.down('sm')]: {
       justifyContent: "center",
       marginRight: "1rem",
-    }
+    },
   },
   bannerText: {
     marginTop: "1rem",
     color: theme.palette.secondary.main,
-    fontWeight: "900",
-    fontSize: "1.3rem",
+    fontWeight: "400",
+    fontSize: 20,
+    [theme.breakpoints.down('sm')]: {
+      fontSize: 14,
+    },
   },
   bannerLink: {
     textDecoration: "none"
   },
   bannerButton: {
-    marginLeft: "2rem",
-    width:"12rem",
-    height:"4rem",
-    textShadow: "1px 0",
-    boxShadow: "1px 5px 5px 3px #e9ecef",
-    textSizeLarge: "2rem",
+    marginLeft: "2vw",
+    padding: "15px 50px",
+    boxShadow: "1px 5px 5px #e6e9ed",
     '& .MuiButton-label': {
-      fontWeight: "900",
-      fontSize: "1.3rem",
-    }
+      fontWeight: "700",
+      fontSize: 20,
+    },
+    [theme.breakpoints.down('sm')]: {
+       marginTop: "10px",
+       padding: "8px 25px",
+       '& .MuiButton-label': {
+        fontSize: 14,
+      },
+    },
   }
 }));
 

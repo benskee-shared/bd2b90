@@ -6,7 +6,7 @@ import WelcomeImage from './components/WelcomePages/WelcomeImage';
 import { SubmitButton } from './components/WelcomePages/SubmitButton';
 import { WelcomeBanner } from './components/WelcomePages/WelcomeBanner';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   main: {
     height: '100%',
     maxHeight: '100hv',
@@ -15,9 +15,11 @@ const useStyles = makeStyles(() => ({
     display: 'block',
   },
   welcomeText: {
-    fontWeight: "900",
-    textShadow: "1px 0",
-    fontSize: "2rem"
+    fontWeight: "700",
+    fontSize: 40,
+    [theme.breakpoints.down('sm')]: {
+      fontSize: 26,
+    },
   },
   registerForm: {
     width: "90%",

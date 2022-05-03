@@ -15,9 +15,11 @@ const useStyles = makeStyles((theme) => ({
     display: 'block',
   },
   welcomeText: {
-    fontWeight: "900",
-    textShadow: "1px 0",
-    fontSize: "2rem"
+    fontWeight: "700",
+    fontSize: 40,
+    [theme.breakpoints.down('sm')]: {
+      fontSize: 26,
+    },
   },
   loginForm: {
     width: "90%",
