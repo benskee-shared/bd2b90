@@ -1,16 +1,37 @@
 import React, { useEffect } from 'react';
-import { Link, useHistory } from 'react-router-dom';
-import {
-  Grid,
-  Box,
-  Typography,
-  Button,
-  FormControl,
-  TextField,
-} from '@material-ui/core';
+import { useHistory } from 'react-router-dom';
+import WelcomeImage from './components/WelcomePages/WelcomeImage';
+import { Grid, Typography, makeStyles } from '@material-ui/core';
+import { WelcomeBanner } from './components/WelcomePages/WelcomeBanner';
+import { TextFieldGroup } from './components/WelcomePages/TextFieldGroup';
+import { SubmitButton } from './components/WelcomePages/SubmitButton';
+
+const useStyles = makeStyles((theme) => ({
+  main: {
+    height: '100%',
+    maxHeight: '100vh',
+  },
+  loginContainer: {
+    display: 'block',
+  },
+  welcomeText: {
+    fontWeight: "700",
+    fontSize: 40,
+    [theme.breakpoints.down('sm')]: {
+      fontSize: 26,
+    },
+  },
+  loginForm: {
+    width: "90%",
+    padding: "5rem",
+    display: "flex",
+    flexDirection: "column",
+  },
+}));
 
 const Login = ({ user, login }) => {
   const history = useHistory();
+  const classes = useStyles();
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -27,42 +48,21 @@ const Login = ({ user, login }) => {
   }, [user, history]);
 
   return (
-    <Grid container justifyContent="center">
-      <Box>
-        <Grid container item>
-          <Typography>Need to register?</Typography>
-          <Link href="/register" to="/register">
-            <Button>Register</Button>
-          </Link>
+    <Grid container className={classes.main}>
+      <WelcomeImage />
+      <Grid container item sm={7} className={classes.loginContainer}>
+        <WelcomeBanner text="Don't have an account?" link="/register" buttonLabel="Create account" />
+        <Grid container item className={classes.loginForm}>
+          <Typography variant="h5" className={classes.welcomeText}>Welcome back!</Typography>
+          <form onSubmit={handleLogin} autoComplete="off">
+            <Grid>
+              <TextFieldGroup name="username"/>
+              <TextFieldGroup name="password" type="password" />
+              <SubmitButton label="Login"/>
+            </Grid>
+          </form>
         </Grid>
-        <form onSubmit={handleLogin}>
-          <Grid>
-            <Grid>
-              <FormControl margin="normal" required>
-                <TextField
-                  aria-label="username"
-                  label="Username"
-                  name="username"
-                  type="text"
-                />
-              </FormControl>
-            </Grid>
-            <FormControl margin="normal" required>
-              <TextField
-                label="password"
-                aria-label="password"
-                type="password"
-                name="password"
-              />
-            </FormControl>
-            <Grid>
-              <Button type="submit" variant="contained" size="large">
-                Login
-              </Button>
-            </Grid>
-          </Grid>
-        </form>
-      </Box>
+      </Grid>
     </Grid>
   );
 };
