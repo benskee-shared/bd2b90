@@ -1,17 +1,38 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useHistory } from 'react-router-dom';
-import {
-  Grid,
-  Box,
-  Typography,
-  Button,
-  FormControl,
-  TextField,
-  FormHelperText,
-} from '@material-ui/core';
+import { useHistory } from 'react-router-dom';
+import { Grid, Typography, makeStyles } from '@material-ui/core';
+import { TextFieldGroup } from './components/WelcomePages/TextFieldGroup';
+import WelcomeImage from './components/WelcomePages/WelcomeImage';
+import { SubmitButton } from './components/WelcomePages/SubmitButton';
+import { WelcomeBanner } from './components/WelcomePages/WelcomeBanner';
+
+const useStyles = makeStyles((theme) => ({
+  main: {
+    height: '100%',
+    maxHeight: '100hv',
+  },
+  registerContainer: {
+    display: 'block',
+  },
+  welcomeText: {
+    fontWeight: "700",
+    fontSize: 40,
+    [theme.breakpoints.down('sm')]: {
+      fontSize: 26,
+    },
+  },
+  registerForm: {
+    width: "90%",
+    padding: "5rem",
+    display: "flex",
+    flexDirection: "column",
+  },
+}));
+
 
 const Signup = ({ user, register }) => {
   const history = useHistory();
+  const classes = useStyles();
 
   const [formErrorMessage, setFormErrorMessage] = useState({});
 
@@ -36,74 +57,23 @@ const Signup = ({ user, register }) => {
   }, [user, history]);
 
   return (
-    <Grid container justifyContent="center">
-      <Box>
-        <Grid container item>
-          <Typography>Need to log in?</Typography>
-          <Link href="/login" to="/login">
-            <Button>Login</Button>
-          </Link>
+    <Grid container className={classes.main}>
+      <WelcomeImage />
+      <Grid container item sm={7} className={classes.registerContainer}>
+        <WelcomeBanner text="Already have an account?" link="/login" buttonLabel="Login" />
+        <Grid container item className={classes.registerForm}>
+          <Typography variant="h5" className={classes.welcomeText}>Create an account.</Typography>
+          <form onSubmit={handleRegister} autoComplete="off">
+            <Grid>
+              <TextFieldGroup name="username"/>
+              <TextFieldGroup name="email" label="e-mail address" type="email" />
+              <TextFieldGroup name="password" type="password" minLength={6} error={formErrorMessage.confirmPassword} />
+              <TextFieldGroup name="confirmPassword" label="Confirm Password" type="password" minLength={6} error={formErrorMessage.confirmPassword} />
+              <SubmitButton label="Create"/>
+            </Grid>
+          </form>
         </Grid>
-        <form onSubmit={handleRegister}>
-          <Grid>
-            <Grid>
-              <FormControl>
-                <TextField
-                  aria-label="username"
-                  label="Username"
-                  name="username"
-                  type="text"
-                  required
-                />
-              </FormControl>
-            </Grid>
-            <Grid>
-              <FormControl>
-                <TextField
-                  label="E-mail address"
-                  aria-label="e-mail address"
-                  type="email"
-                  name="email"
-                  required
-                />
-              </FormControl>
-            </Grid>
-            <Grid>
-              <FormControl error={!!formErrorMessage.confirmPassword}>
-                <TextField
-                  aria-label="password"
-                  label="Password"
-                  type="password"
-                  inputProps={{ minLength: 6 }}
-                  name="password"
-                  required
-                />
-                <FormHelperText>
-                  {formErrorMessage.confirmPassword}
-                </FormHelperText>
-              </FormControl>
-            </Grid>
-            <Grid>
-              <FormControl error={!!formErrorMessage.confirmPassword}>
-                <TextField
-                  label="Confirm Password"
-                  aria-label="confirm password"
-                  type="password"
-                  inputProps={{ minLength: 6 }}
-                  name="confirmPassword"
-                  required
-                />
-                <FormHelperText>
-                  {formErrorMessage.confirmPassword}
-                </FormHelperText>
-              </FormControl>
-            </Grid>
-            <Button type="submit" variant="contained" size="large">
-              Create
-            </Button>
-          </Grid>
-        </form>
-      </Box>
+      </Grid>
     </Grid>
   );
 };
