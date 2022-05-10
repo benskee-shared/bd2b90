@@ -4,7 +4,7 @@ import {  Grid } from '@material-ui/core'
 
 const useStyles = makeStyles(() => ({
   root: {
-    maxWidth: "260px",
+    maxWidth: 260,
   },
   senderImage: {
     borderRadius: '10px 10px 0 10px',
@@ -19,14 +19,13 @@ const useStyles = makeStyles(() => ({
 const MultipleImages = ({ images, isSender }) => {
   const classes = useStyles()
 
-  const addUrlParams = url => {
-    const baseUrl = 'http://res.cloudinary.com/benskeedev/image/upload/w_120,h_100,c_fill/'
+  const addUrlParams = (url) => {
+    const baseUrl = `${process.env.REACT_APP_CLOUDINARY_GET_URL}w_120,h_100/`
     return baseUrl + url.split('upload/')[1]
   }
 
   return (
   <Grid container className={classes.root}>
-
   {images.map((image) => (
       <Grid item key={image}>
         <img

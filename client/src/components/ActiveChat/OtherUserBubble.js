@@ -1,13 +1,13 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Typography, Avatar } from '@material-ui/core';
-import SingleImage from './SingleImage';
-import { MultipleImages } from '.';
+import MessageBody from './MessageBody';
 
 const useStyles = makeStyles(() => ({
   root: {
     display: 'flex',
-    marginBottom: '25px',
+    marginBottom: 30,
+    maxWidth: "40%"
   },
   avatar: {
     height: 30,
@@ -19,30 +19,12 @@ const useStyles = makeStyles(() => ({
     fontSize: 11,
     color: '#BECCE2',
     fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  bubble: {
-    backgroundImage: 'linear-gradient(225deg, #6CC1FF 0%, #3A8DFF 100%)',
-    borderRadius: '0 10px 10px 10px',
-    marginTop: -5
-  },
-    singleImage: {
-    borderRadius: '0 0 10px 10px',
-    minWidth: '150px'
-  },
-  text: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-    letterSpacing: -0.2,
-    padding: 8,
+    marginBottom: 2,
   },
 }));
 
 const OtherUserBubble = ({ text, time, otherUser, images }) => {
   const classes = useStyles();
-  const hasSingleImage = images && images.length === 1
-  const hasMultipleImages = images && images.length > 1
 
   return (
     <Box className={classes.root}>
@@ -55,11 +37,7 @@ const OtherUserBubble = ({ text, time, otherUser, images }) => {
         <Typography className={classes.usernameDate}>
           {otherUser.username} {time}
         </Typography>
-          {hasSingleImage && <SingleImage hasText={!!text} imageUrl={images[0]} sender={false} />}
-        {text && <Box className={hasSingleImage ? `${classes.bubble} ${classes.singleImage}` : classes.bubble}>
-          <Typography className={classes.text}>{text}</Typography>
-        </Box>}
-          {hasMultipleImages && <MultipleImages images={images} sender={false} />}
+        <MessageBody images={images} text={text} isSender={false} />
       </Box>
     </Box>
   );

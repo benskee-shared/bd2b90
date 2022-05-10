@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import { FormControl, FilledInput, IconButton } from '@material-ui/core';
-import axios from 'axios';
+import { FormControl, FilledInput, FormHelperText } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import ImagePreview from './ImagePreview';
+import saveImage from './../../cloudinaryRoutes';
+import UploadImageButton from './UploadImageButton';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -15,45 +16,46 @@ const useStyles = makeStyles(() => ({
     borderRadius: 8,
     marginBottom: 20,
   },
+  error: {
+    fontSize: 16,
+    textAlign: "right",
+    margin: 10,
+  }
 }));
 
 const Input = ({ otherUser, conversationId, user, postMessage }) => {
   const classes = useStyles();
   const [text, setText] = useState('');
   const [images, setImages] = useState('');
+  const [error, setError] = useState(null);
+    
 
   const handleChange = (event) => {
     setText(event.target.value);
+    setError(null)
   };
 
   const handleImageChange = (e) => {
     setImages(e.target.files)
   }
 
-  const uploadToCloudinary = async (file) => {
-    const body = new FormData()
-    body.append('file', file)
-    body.append("upload_preset", "ml_default")
-    const instance = axios.create()
-    try {
-      const { data } = await instance.post("https://api.cloudinary.com/v1_1/benskeedev/image/upload", body)
-      return data.url
-    } catch(err) {
-      console.error(err);
-      return "Error"
-    }
-  }
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     const form = event.currentTarget;
     const formElements = form.elements;
-    const attachments = [];
-    for (const key of Object.keys(images)) {
-      const imageUrl = await uploadToCloudinary(images[key])
-      if (imageUrl !== "Error") attachments.push(imageUrl)
+    let attachments = [];
+
+    if(images) {
+      const promises = Object.keys(images).map(key => saveImage(images[key]))
+      
+      const results = await Promise.all(promises)
+      if (results.includes('Error')) {
+        setError('Something went wrong uploading your image. Please try again.')
+      } else {
+        attachments = [...results]
+      }
     }
-    // add sender user info if posting to a brand new convo, so that the other user will have access to username, profile pic, etc.
+    
     const reqBody = {
       attachments,
       text: formElements.text.value,
@@ -67,9 +69,10 @@ const Input = ({ otherUser, conversationId, user, postMessage }) => {
   };
 
   return (
-    <form className={classes.root} onSubmit={handleSubmit}>
+    <form className={classes.root} onSubmit={handleSubmit} autoComplete='off'>
+      {images ? <ImagePreview images={images} /> : null}
+      {error ? <FormHelperText className={classes.error} error >{error}</FormHelperText> : null}
       <FormControl fullWidth hiddenLabel>
-
         <FilledInput
           classes={{ root: classes.input }}
           disableUnderline
@@ -78,12 +81,7 @@ const Input = ({ otherUser, conversationId, user, postMessage }) => {
           name="text"
           onChange={handleChange}
           endAdornment={
-          <label htmlFor="icon-button-file">
-          <input hidden accept="image/*" id="icon-button-file" type="file" multiple="multiple" onChange={handleImageChange}/>
-          <IconButton color="primary" aria-label="upload picture" component="span" >
-            <ContentCopyIcon />
-          </IconButton>
-        </label>
+            <UploadImageButton handleImageChange={handleImageChange} />
           }
         >
         </FilledInput>
