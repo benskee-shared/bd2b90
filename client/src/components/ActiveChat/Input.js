@@ -70,8 +70,8 @@ const Input = ({ otherUser, conversationId, user, postMessage }) => {
 
   return (
     <form className={classes.root} onSubmit={handleSubmit} autoComplete='off'>
-      {images ? <ImagePreview images={images} /> : null}
-      {error ? <FormHelperText className={classes.error} error >{error}</FormHelperText> : null}
+      {images && <ImagePreview images={images} />}
+      {error && <FormHelperText className={classes.error} error >{error}</FormHelperText>}
       <FormControl fullWidth hiddenLabel>
         <FilledInput
           classes={{ root: classes.input }}
